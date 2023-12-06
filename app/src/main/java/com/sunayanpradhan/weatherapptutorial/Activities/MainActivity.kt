@@ -20,15 +20,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.ads.OnUserEarnedRewardListener
-import com.google.android.gms.ads.interstitial.InterstitialAd
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
-import com.google.android.gms.ads.rewarded.RewardItem
-import com.google.android.gms.ads.rewarded.RewardedAd
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.sunayanpradhan.weatherapptutorial.Models.WeatherModel
@@ -55,7 +46,6 @@ class MainActivity : AppCompatActivity() {
 
     private val apiKey="f70ca239bf30695349b25a9bb3361c69"
 
-    private var mInterstitialAd: InterstitialAd?=null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,14 +53,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-
-        MobileAds.initialize(this)
-
-        val adRequest= AdRequest.Builder().build()
-
-        binding.bannerAds.loadAd(adRequest)
-
-        loadAds()
 
         fusedLocationProvider=LocationServices.getFusedLocationProviderClient(this)
 
@@ -105,8 +87,6 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
-
-
         binding.currentLocation.setOnClickListener {
 
             getCurrentLocation()
@@ -131,22 +111,6 @@ class MainActivity : AppCompatActivity() {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(call: Call<WeatherModel>, response: Response<WeatherModel>) {
                 if (response.isSuccessful){
-
-                    loadAds()
-
-                    if (mInterstitialAd!=null){
-
-                        mInterstitialAd!!.show(this@MainActivity)
-
-
-                    }
-                    else{
-
-
-                    }
-
-
-
                     binding.progressBar.visibility= View.GONE
 
                     response.body()?.let {
@@ -175,29 +139,6 @@ class MainActivity : AppCompatActivity() {
 
 
     }
-
-
-    private fun loadAds(){
-
-        val adRequest= AdRequest.Builder().build()
-
-        InterstitialAd.load(this,
-            "ca-app-pub-3940256099942544/1033173712",
-            adRequest,object :
-            InterstitialAdLoadCallback(){
-            override fun onAdFailedToLoad(p0: LoadAdError) {
-                mInterstitialAd=null
-            }
-            override fun onAdLoaded(p0: InterstitialAd) {
-                mInterstitialAd=p0
-            }
-        })
-    }
-
-
-
-
-
 
     private fun fetchCurrentLocationWeather(latitude: String, longitude: String) {
 
@@ -263,11 +204,8 @@ class MainActivity : AppCompatActivity() {
 
 
                             )
-
-
                         }
                     }
-
             }
             else{
 
@@ -275,10 +213,7 @@ class MainActivity : AppCompatActivity() {
 
                 startActivity(intent)
 
-
             }
-
-
         }
         else{
 
@@ -297,8 +232,6 @@ class MainActivity : AppCompatActivity() {
                 Manifest.permission.ACCESS_FINE_LOCATION),
             LOCATION_REQUEST_CODE
         )
-
-
     }
 
     private fun isLocationEnabled(): Boolean {
@@ -308,9 +241,6 @@ class MainActivity : AppCompatActivity() {
 
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
                 ||locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-
-
-
 
     }
 
@@ -324,11 +254,7 @@ class MainActivity : AppCompatActivity() {
             return true
 
         }
-
         return false
-
-
-
     }
 
     override fun onRequestPermissionsResult(
@@ -340,23 +266,12 @@ class MainActivity : AppCompatActivity() {
         if (requestCode==LOCATION_REQUEST_CODE){
 
             if (grantResults.isNotEmpty() && grantResults[0]==PackageManager.PERMISSION_GRANTED){
-
                 getCurrentLocation()
-
             }
             else{
-
-
-
-
+                //
             }
-
-
-
         }
-
-
-
     }
 
 
@@ -437,7 +352,6 @@ class MainActivity : AppCompatActivity() {
     private fun updateUI(id: Int) {
 
         binding.apply {
-
 
             when (id) {
 
@@ -537,7 +451,6 @@ class MainActivity : AppCompatActivity() {
 
                 //unknown
                 else->{
-
                     weatherImg.setImageResource(R.drawable.ic_unknown)
 
                     mainLayout.background=ContextCompat
@@ -545,25 +458,9 @@ class MainActivity : AppCompatActivity() {
 
                     optionsLayout.background=ContextCompat
                         .getDrawable(this@MainActivity, R.drawable.unknown_bg)
-
-
                 }
-
-
             }
-
-
-
-
-
         }
-
-
-
     }
-
-
-
-
 }
 
